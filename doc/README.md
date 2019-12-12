@@ -1,0 +1,4 @@
+# Hardware
+
+# Pi Setup
+## GPIO
