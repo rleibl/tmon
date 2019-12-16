@@ -1,0 +1,53 @@
+
+zenmon
+  rename
+=====================
+
+client 
+  * use local database
+      * --use-local-db switch
+      * check for database. Init if not found
+  * option to send all/past data
+  * --test-server option (data is not added to the database on server)
+  * --test option (output json data to stdout and don't send)
+
+db
+  * get uuid for node (or create new)
+  * insert data (temp_struct)
+  * get_data(timeframe)
+      * convenience functions
+          * 24h
+	  * 1 week
+	  * 1 month
+	  * all
+
+json
+  * temp_struct to json
+  * temp_struct from json
+
+general
+  * give type of sensor information to allow for other sensors
+
+sensor struct base class
+  * to_json
+  * from_json
+
+temp_struct {
+    token
+    type
+    time
+    test bool
+    data {
+      temperature
+    }
+}
+
+return_struct {
+  success bool
+  error string
+}
+
+Doc
+--------
+default struct
+

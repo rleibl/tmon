@@ -47,6 +47,9 @@ def get_uuid(node):
     # TODO insert into database
     #      check if uuid exists for node
 
+def insert_uuid(node, uuid):
+    pass
+
 
 def init_db():
     # TODO read config
