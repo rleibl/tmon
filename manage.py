@@ -1,19 +1,23 @@
-#!/usr/bin/env python3
+
+from tmon.config import Config
+from tmon.db import DB
+import tmon.server
+
 
 import uuid
 import sys
 
-from .db import DB
-from .config import Config
-
 def print_help():
     print(
 """
-    Helper tool for tmon.
+    Manage tool for tmon.
     Usage:
         {} <command> [options]
 
     Where command is one of
+
+    run
+        run the server
 
     help
         Print this help
@@ -28,23 +32,26 @@ def print_help_and_exit():
     print_help()
     sys.exit(-1)
 
-def get_uuid(node):
+def get_token(node):
 
     conf = Config()
     n = ""
     try:
         n = node[0]
     except IndexError:
-        print("no node given after create_uuid command")
+        print("no node given after get_token command")
         print_help_and_exit()
-        # TODO print all nodes and uuids
+        # TODO print all nodes and tokens
 
     db = DB(conf.db)
     db.connect()
-    u = db.add_uuid(node) # will return existing uuid, if available
+    u = db.add_uuid(n) # will return existing uuid, if available
     db.disconnect()
     print(u)
 
+def run():
+    c = Config()
+    tmon.server.run(c)
 
 # main
 if __name__ == "__main__":
@@ -57,12 +64,13 @@ if __name__ == "__main__":
 
     opts = sys.argv[2:]
 
-    if command == "help":
+    if command == "get_token":
+        get_token(opts)
+    elif command == "run":
+        run()
+    else:
         print_help_and_exit()
-    elif command == "init_db":
-        init_db()
-    elif command == "get_uuid":
-        get_uuid(opts)
+
 
     
 

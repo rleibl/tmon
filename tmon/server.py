@@ -118,11 +118,16 @@ class Httpyd(http.server.SimpleHTTPRequestHandler):
     # -------------------------------------------------------------------------
     def temp_handler(self, body):
 
-        t = Temperature(body)
-
         global database
 
+        t = Temperature(body)
+
         database.connect()
+        if not database.check_uuid(t.d['token']):
+            database.disconnect()
+            self._send_error()
+            return
+
         database.insert_temperature(t)
         database.disconnect()
 
