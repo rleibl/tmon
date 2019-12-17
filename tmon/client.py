@@ -1,52 +1,53 @@
-#!/usr/bin/env python3
 
-# globals
-# -----------------------------------------------------------
-temp_filename = ""
-log_filename = ""
-temp_server = ""
+class Client():
 
-# logging
-# -----------------------------------------------------------
-def log(message):
-    pass
+    # init
+    # -----------------------------------------------------------
+    def __init__(self, port=1337, host=None, filename=None):
+        self.filename = filename
+        self.host     = host
+        self.port     = port
 
-# error handling
-# -----------------------------------------------------------
-class TemperatureException(Exception):
-    pass
+    # try finding sensor files
+    # -----------------------------------------------------------
+    def autodiscover(self):
+        pass
+
+    # send the temperature to the server
+    # -----------------------------------------------------------
+    def send(self, temperature):
 
 
-# read the temperature file
-# -----------------------------------------------------------
-def readtemp(filename):
 
-    try:
-        f = open(filename)
-        l = f.readline() # throwaway
-        if l == "":
-            raise TemperatureException("Readline failed (1)")
 
-        l = f.readline()
-        if l == "":
-            raise TemperatureException("Readline failed (2)")
+    # read the temperature file
+    # -----------------------------------------------------------
+    def readtemp(self, filename=None):
+
+        if not filename and not self.filename:
+            raise ConfigException("Filename not set")
 
         try:
-            i = l.index('=')
-        except ValueError:
-            raise TemperatureException("File corrupt:" + l)
+            f = open(filename)
+            l = f.readline() # throwaway
+            if l == "":
+                f.close()
+                raise TemperatureException("Readline failed (1)")
 
-        temperature = l[ i+1 : -1]
+            l = f.readline()
+            f.close()
+            if l == "":
+                raise TemperatureException("Readline failed (2)")
 
-        return temperature
+            try:
+                i = l.index('=')
+            except ValueError:
+                raise TemperatureException("File corrupt:" + l)
 
-    except Exception as e:
-            raise TemperatureException("File open failed:" + e)
+            temperature = l[ i+1 : -1]
 
-# http 
-# -----------------------------------------------------------
+            return temperature
 
-# main
-# -----------------------------------------------------------
-t = readtemp("example.temp")
-print(t)
+        except Exception as e:
+                raise TemperatureException("File open failed:" + e)
+
