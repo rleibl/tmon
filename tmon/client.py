@@ -16,8 +16,7 @@ class Client():
     # send the temperature to the server
     # -----------------------------------------------------------
     def send(self, temperature):
-
-
+        pass
 
 
     # read the temperature file

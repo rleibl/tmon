@@ -3,6 +3,9 @@
 import uuid
 import sys
 
+from .db import DB
+from .config import Config
+
 def print_help():
     print(
 """
@@ -29,6 +32,8 @@ def print_help_and_exit():
     sys.exit(-1)
 
 def get_uuid(node):
+
+    conf = Config()
     n = ""
     try:
         n = node[0]
@@ -37,23 +42,12 @@ def get_uuid(node):
         print_help_and_exit()
         # TODO print all nodes and uuids
 
-    # TODO Check for uuid
-
-    u = str( uuid.uuid1() )
-    u = u.replace('-', '')
-    print("uuid for node '{}'".format(n))
+    db = DB(conf.db)
+    db.connect()
+    u = db.add_uuid(node) # will return existing uuid, if available
+    db.disconnect()
     print(u)
 
-    # TODO insert into database
-    #      check if uuid exists for node
-
-
-def init_db():
-    # TODO read config
-    # TODO check if file exists
-    # TODO check if tables exist
-    # TODO create tables
-    pass
 
 # main
 if __name__ == "__main__":
@@ -62,6 +56,7 @@ if __name__ == "__main__":
         command = sys.argv[1]
     except IndexError:
         print_help_and_exit()
+
 
     opts = sys.argv[2:]
 
