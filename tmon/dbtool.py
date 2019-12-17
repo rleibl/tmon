@@ -21,9 +21,6 @@ def print_help():
     get_token <node>
         Return the uuid for the given node. Create a new token for 
         node <node> and add it to the database it it does not exist.
-
-    init_db
-        Initialize the database // TODO
     
 """.format(sys.argv[0]))
 

@@ -9,20 +9,17 @@ class BaseSensor():
         If json is given, tries to construct the object using the json data
         given.
         """
-        self.d = {
-                "token": "",
-                "type": "",
-                "node": "",
-                "time": "",
-                "test": False,
-                "data": {}
-        }
-
-        # XXX that doesn't look right.
-        #     Perform correct validation of input
-        #     Check for existence.
+        j = {}
         if json_in != None:
-            self.d = json.loads(json_in)
+            j = json.loads(json_in)
+
+        self.d = {}
+        self.d["token"] = j.get("token", "")
+        self.d["type"]  = j.get("type", "")
+        self.d["node"]  = j.get("node", "")
+        self.d["time"]  = j.get("time", "")
+        self.d["test"]  = j.get("test", False)
+        self.d["data"]  = {}
 
     def to_json(self):
         """
@@ -47,9 +44,7 @@ class Temperature(BaseSensor):
         if json_in != None:
             j = json.loads(json_in)
             try:
-                self.d['data']['temperature'] 
-                        = j['data']['temperature']
+                self.d['data']['temperature'] = j['data']['temperature']
             except KeyError:
-                print("Temperature data did not contain temperature field"
-
+                print("Temperature data did not contain temperature field")
 

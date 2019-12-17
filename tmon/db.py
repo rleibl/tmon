@@ -84,11 +84,11 @@ class DB():
         Expects a temperature class to write to the database
         """
 
-        sql = "INSERT INTO temperatures (node, time, temp) VALUES (?, ?, ?)"
+        sql = "INSERT INTO temperature (node, time, temp) VALUES (?, ?, ?)"
 
-        self.c.execute(sql, temp['node'],
-                            temp['time'],
-                            temp['data']['temperature'])
+        self.c.execute(sql, (temp.d['node'],
+                            temp.d['time'],
+                            temp.d['data']['temperature']))
 
         self.connection.commit()
 

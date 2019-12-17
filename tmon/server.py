@@ -4,6 +4,10 @@ import socketserver
 import json
 
 from .url import *
+from .sensors import Temperature
+from .db import DB
+
+database = None
 
 class Httpyd(http.server.SimpleHTTPRequestHandler):
 
@@ -27,6 +31,8 @@ class Httpyd(http.server.SimpleHTTPRequestHandler):
         # dispatch
         if endpoint == "jsontest":
             self.jsontest_handler(body)
+        elif endpoint == "temp":
+            self.temp_handler(body)
         else:
             self.default_handler()
 
@@ -61,6 +67,13 @@ class Httpyd(http.server.SimpleHTTPRequestHandler):
 """.format(code, message, message)
 
         self._send(message=e, code=code)
+
+    # -------------------------------------------------------------------------
+    def _send_json_success(self):
+        j = json.dumps({ "success": True })
+        h = { "content-type": "application/json" }
+
+        self._send(j, 200, h)
 
     # -------------------------------------------------------------------------
     #
@@ -103,6 +116,20 @@ class Httpyd(http.server.SimpleHTTPRequestHandler):
         self._send() # default
 
     # -------------------------------------------------------------------------
+    def temp_handler(self, body):
+
+        t = Temperature(body)
+
+        global database
+
+        database.connect()
+        database.insert_temperature(t)
+        database.disconnect()
+
+        self._send_json_success()
+
+
+    # -------------------------------------------------------------------------
     #
     def test_handler(self):
         message = """
@@ -129,10 +156,17 @@ class Httpyd(http.server.SimpleHTTPRequestHandler):
         header = {'Content-Type': 'application/json'}
         self._send(j, 200, header)
 
+
 # -------------------------------------------------------------------------
 #
-def run(port):
+def run(config):
 
-    with socketserver.TCPServer(("", port), Httpyd) as httpd:
-        print("serving at port", port)
+    # how could we do this without globals?
+    global database 
+    database = DB(config.db)
+    database.init()
+
+    with socketserver.TCPServer(("", config.port), Httpyd) as httpd:
+
+        print("serving at port", config.port)
         httpd.serve_forever()
