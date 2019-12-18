@@ -4,3 +4,6 @@ class TemperatureException(Exception):
 
 class ConfigException(Exception):
     pass
+
+class ValidationError(Exception):
+    pass
