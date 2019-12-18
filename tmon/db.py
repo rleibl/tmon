@@ -75,9 +75,9 @@ class DB():
         self.c.execute(sql, (uuid,))
         res = self.c.fetchone()
         if res != None:
-            return True
+            return res[0]
 
-        return False
+        return None
 
     def insert_temperature(self, temp):
         """

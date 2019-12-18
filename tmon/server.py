@@ -25,13 +25,12 @@ class Httpyd(http.server.SimpleHTTPRequestHandler):
         content_length = int(self.headers['Content-Length'])
         if not content_length:
             self._send_error("Bad Request", 400)
+            return
 
         body = self.rfile.read(content_length)
 
         # dispatch
-        if endpoint == "jsontest":
-            self.jsontest_handler(body)
-        elif endpoint == "temp":
+        if endpoint == "temp":
             self.temp_handler(body)
         else:
             self.default_handler()
@@ -75,6 +74,12 @@ class Httpyd(http.server.SimpleHTTPRequestHandler):
 
         self._send(j, 200, h)
 
+    # -------------------------------------------------------------------------
+    def _send_json_error(self, e):
+        j = json.dumps({ "success": False, "error": e })
+        h = { "content-type": "application/json" }
+
+        self._send(j, 200, h)
     # -------------------------------------------------------------------------
     #
     def _send(self, message="<html><body>no</body></html>", 
@@ -121,9 +126,14 @@ class Httpyd(http.server.SimpleHTTPRequestHandler):
         global database
 
         t = Temperature(body)
+        try:
+            t.validate()
+        except ValidationError as v:
+            self._send_json_error(str(v))
 
         database.connect()
-        if not database.check_uuid(t.d['token']):
+        t.d['node'] = database.check_uuid(t.d['token'])
+        if not t.d['node']:
             database.disconnect()
             self._send_error()
             return
@@ -132,35 +142,6 @@ class Httpyd(http.server.SimpleHTTPRequestHandler):
         database.disconnect()
 
         self._send_json_success()
-
-
-    # -------------------------------------------------------------------------
-    #
-    def test_handler(self):
-        message = """
-        <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
-        <html><head>
-        <title>It works</title>
-        </head><body>
-        <h1>It works</h1>
-        </body></html>
-        """
-        self._send(message)
-
-    # -------------------------------------------------------------------------
-    #
-    def jsontest_handler(self, data):
-        try:
-            struct = json.loads(data)
-        except json.JSONDecodeError:
-            self._send_error("Bad Request", 400)
-            return
-
-        print("jsontest: ", struct)
-        j = json.dumps(struct)
-        header = {'Content-Type': 'application/json'}
-        self._send(j, 200, header)
-
 
 # -------------------------------------------------------------------------
 #
