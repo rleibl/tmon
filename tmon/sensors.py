@@ -1,6 +1,7 @@
 
 import json
 import datetime
+import logging
 
 from .errors import *
 
@@ -45,11 +46,11 @@ class BaseSensor():
         #self.d["test"]
 
     def print(self):
-        print("    'token': '{}'".format(self.d['token']))
-        print("    'type':  '{}'".format(self.d['type']))
-        print("    'node':  '{}'".format(self.d['node']))
-        print("    'time':  '{}'".format(self.d['time']))
-        print("    'test':  '{}'".format(self.d['test']))
+        logging.info("    'token': '{}'".format(self.d['token']))
+        logging.info("    'type':  '{}'".format(self.d['type']))
+        logging.info("    'node':  '{}'".format(self.d['node']))
+        logging.info("    'time':  '{}'".format(self.d['time']))
+        logging.info("    'test':  '{}'".format(self.d['test']))
 
 
     def to_json(self):
@@ -87,12 +88,12 @@ class Temperature(BaseSensor):
 
     def print(self):
         
-        print("{")
+        logging.info("{")
         BaseSensor.print(self)
-        print("    'data': {")
-        print("        'temperature': '{}'".format(self.d['data']['temperature']))
-        print("    }")
-        print("}")
+        logging.info("    'data': {")
+        logging.info("        'temperature': '{}'".format(self.d['data']['temperature']))
+        logging.info("    }")
+        logging.info("}")
 
 
 

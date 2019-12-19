@@ -1,8 +1,7 @@
 import sqlite3
 import uuid
 import os
-
-from .log import log
+import logging
 
 class DB():
 
@@ -22,14 +21,14 @@ class DB():
     def init(self):
 
         if not os.path.exists(self.sqlite3_filename):
-            log("Database file '{}' does not exist. Creating...".format(self.sqlite3_filename))
+            logging.info("Database file '{}' does not exist. Creating...".format(self.sqlite3_filename))
             self.connect() # this will create the file
 
-            log("Creating table 'temperature'")
+            logging.info("Creating table 'temperature'")
             sql = 'CREATE TABLE temperature (node VARCHAR(128), time DATE, temp INTEGER);'
             self.c.execute(sql)
 
-            log("Creating table 'tokens'")
+            logging.info("Creating table 'tokens'")
             sql = 'CREATE TABLE tokens (token VARCHAR(128), node  VARCHAR(128), desc  VARCHAR(256));'
             self.c.execute(sql)
 
@@ -47,7 +46,7 @@ class DB():
 
         u = str( uuid.uuid1() )
         u = u.replace('-', '')
-        print("new uuid for node '{}': {}".format(node, u))
+        logging.info("new uuid for node '{}': {}".format(node, u))
 
         sql = 'INSERT INTO tokens (token, node, desc) VALUES (?, ?, ?)'
         self.c.execute(sql, (u, node, desc))

@@ -2,6 +2,7 @@
 import http.server
 import socketserver
 import json
+import logging
 
 from .url import *
 from .sensors import Temperature
@@ -17,7 +18,7 @@ class Httpyd(http.server.SimpleHTTPRequestHandler):
         """
         POST request dispatcher.
         """
-        print("POST {}".format(self.path))
+        logging.info("POST {}".format(self.path))
 
         u = urlparse(self.path)
         endpoint = u.path[0]
@@ -110,6 +111,12 @@ class Httpyd(http.server.SimpleHTTPRequestHandler):
     # -------------------------------------------------------------------------
     # Handler functions
     # -------------------------------------------------------------------------
+    def log_message(self, format, *args):
+        logging.info(format, *args)
+
+    # -------------------------------------------------------------------------
+    # Handler functions
+    # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     #
@@ -135,6 +142,7 @@ class Httpyd(http.server.SimpleHTTPRequestHandler):
         t.d['node'] = database.check_uuid(t.d['token'])
         if not t.d['node']:
             database.disconnect()
+            logging.warning("Node not found for uuid '{}'".format(t.d['token']))
             self._send_error()
             return
 
@@ -154,5 +162,10 @@ def run(config):
 
     with socketserver.TCPServer(("", config.port), Httpyd) as httpd:
 
-        print("serving at port", config.port)
+        #logging.basicConfig( level=logging.INFO)
+        logging.basicConfig( filename=config.logfile,
+                             level=logging.INFO,
+                             format='%(asctime)s %(message)s',
+                             datefmt='%m/%d/%Y %H:%M:%S')
+        logging.info("serving at port {}".format(config.port))
         httpd.serve_forever()

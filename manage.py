@@ -47,7 +47,7 @@ def get_token(node):
     db.connect()
     u = db.add_uuid(n) # will return existing uuid, if available
     db.disconnect()
-    print(u)
+    print("{}: {}".format(node, u))
 
 def run():
     c = Config()
