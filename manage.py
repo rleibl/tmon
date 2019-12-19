@@ -25,6 +25,9 @@ def print_help():
     get_token <node>
         Return the uuid for the given node. Create a new token for 
         node <node> and add it to the database it it does not exist.
+
+    list
+        List all nodes and tokens
     
 """.format(sys.argv[0]))
 
@@ -49,9 +52,25 @@ def get_token(node):
     db.disconnect()
     print("{}: {}".format(node, u))
 
+def list_nodes():
+    conf = Config()
+    db = DB(conf.db)
+    db.connect()
+    result = db.list_nodes()
+    db.disconnect()
+
+    for i in result:
+        print("{}: {}".format(i['node'], i['token']))
+
 def run():
     c = Config()
     tmon.server.run(c)
+
+    db = DB(conf.db)
+    db.connect()
+    u = db.add_uuid(n) # will return existing uuid, if available
+    db.disconnect()
+    print("{}: {}".format(node, u))
 
 # main
 if __name__ == "__main__":
@@ -68,6 +87,8 @@ if __name__ == "__main__":
         get_token(opts)
     elif command == "run":
         run()
+    elif command == "list":
+        list_nodes()
     else:
         print_help_and_exit()
 

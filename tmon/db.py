@@ -65,7 +65,7 @@ class DB():
 
     def check_uuid(self, uuid):
         """
-        Check if a given uuid is valid.
+        Check if a given uuid is valid and return the corresponding node
         This does not create a uuid if requested. Use dbtool to create
         new uuids or add_uuid().
         """
@@ -77,6 +77,17 @@ class DB():
             return res[0]
 
         return None
+
+    def list_nodes(self):
+        sql = 'SELECT node, token FROM tokens'
+        self.c.execute(sql)
+        result = self.c.fetchall()
+        r = []
+        for t in result:
+            r.append( {'node': t[0], 'token': t[1] } )
+
+        return r
+
 
     def insert_temperature(self, temp):
         """
