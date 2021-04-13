@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if ps aux | grep 'python' | grep 'manage'; then
+	echo "tmon process running ... ok"
+else
+	echo "tmon process not running ... fail"
+	python3 /home/ovid/bin/send_tmon_error.py
+fi
