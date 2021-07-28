@@ -2,8 +2,28 @@
 Temperature monitoring project with Raspberry Pi.
 This is a toy project for self education.
 
+## About
+The project consists of a server and a client part.
+The server holds a sqlite database with temperature values for the clients.
+The clients are nodes, e.g. Raspberry Pi, that measure a temperature and
+(regularly) report it to the server via internet.
+
 ## Server
-This is an educational project, so the server is written using the python 3 standard library, instead of using one of the obvious frameworks like django or pyramid.
+This is an educational project, so the server is written using the python 3 standard library, instead of using one of the obvious frameworks.
+
+The server can create tokens for clients. A token is required for the server
+to accept data.
+```
+	# Usage
+	python manage.py get_token <node> 
+
+	# To create a token for a node located in the basement for example
+	python manage.py get_token basement
+```
+
+If a node by that name already exists, returns the corresponding token. The
+client is required to send this token, along with its node name to the server,
+otherwise the server will not accept data.
 
 ## Client
 ```
