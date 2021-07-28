@@ -2,10 +2,21 @@ from http.client import HTTPConnection
 import json
 import datetime
 
+# -----------------------------------------------------------
+# server address and port
 port     = 13117
 temphost = "localhost"
-filename = '../test/example.temp'
+
+# -----------------------------------------------------------
+# "authentication" token
 token    = 'c791daaa211911ea845c3c15c2d309e2'
+
+# -----------------------------------------------------------
+# Temperature filename
+filename = '../test/example.temp'
+
+# -----------------------------------------------------------
+# local log file
 logfile  = 'client.log'
 
 def log_and_exit(message):
@@ -33,7 +44,6 @@ try:
         log_and_exit("File corrupt:" + l)
 
     temperature = l[ i+1 : -1]
-
 
 except Exception as e:
         log_and_exit("File open failed:" + e)
